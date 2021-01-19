@@ -1,54 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Основы Vue</title>
-    <link rel="stylesheet" href="theme.css"/>
+    <link rel="stylesheet" href="theme.css" />
 </head>
 <body>
 
-<div class="container" id="app">
+<div class="container" id="app" v-cloak>
     <div class="card">
         <h1>План по изучению Vue.js</h1>
 
         <div class="steps">
             <div class="steps-content">
-                {{currentStepText}}
+                {{ activeStep.text }}
             </div>
             <ul class="steps-list">
                 <li
                         class="steps-item"
-                        v-for="(step, index) in steps"
-                        :class="{active: activeIndex === index, done: activeIndex > index}"
-                        @click="setActive(index)"
+                        v-for="(step, idx) in steps"
+                        :class="{
+              active: idx === activeIndex,
+              done: idx < activeIndex
+            }"
                 >
-                    <span>{{index + 1}}</span>
+                    <span @click="setActive(idx)">{{idx + 1}}</span>
                     {{step.title}}
                 </li>
             </ul>
-            <div>
-                <button
-                        class="btn"
-                        @click="prev"
-                        :disabled="disablePrevButton"
-                        v-if="!isFinish">Назад
+            <div v-if="isActive">
+                <button class="btn" :disabled="prevDisabled" @click="prev">Назад</button>
+                <button class="btn primary" @click="nextOfFinish">
+                    {{ isLastStep ? 'Закончить' : 'Вперед' }}
                 </button>
-                <button
-                        class="btn primary"
-                        @click="nextOfFinish"
-                        v-if="!isFinish && activeIndex + 1 < steps.length">Вперед
-                </button>
-                <button
-                        class="btn"
-                        v-if="isFinish"
-                        @click="reset">Начать заново
-                </button>
-                <button
-                        class="btn primary"
-                        v-if="finishStepButton"
-                        @click="nextOfFinish">Закончить
-                </button>
+            </div>
+            <div v-else>
+                <button class="btn" @click="reset">Начать заного</button>
             </div>
         </div>
     </div>
